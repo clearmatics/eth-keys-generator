@@ -1,4 +1,4 @@
-# ibft-keys-generator
+# eth-keys-generator
 Generate ethereum keys and write it to Kubernetes Secrets and ConfigMaps
 
 ## External Dependencies
