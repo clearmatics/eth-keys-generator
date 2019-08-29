@@ -42,7 +42,7 @@ def write_keys(wallet, name, namespace):
     cmap = client.V1ConfigMap()
 
     sec.data = {'private_key': base64.b64encode(wallet['private_key'].encode()).decode()}
-    cmap.data = {'address': wallet['address'], 'pub_key': wallet['pubkey']}
+    cmap.data = {'address': wallet['address'], 'pub_key': wallet['pub_key']}
 
     api_instance.patch_namespaced_secret(name, namespace, sec)
     api_instance.patch_namespaced_config_map(name, namespace, cmap)
