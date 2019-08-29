@@ -77,7 +77,7 @@ def main():
         namespace = args.namespace
 
     wallet = generate_keys()
-    write_keys(wallet, name, namespace)
+    write_keys(wallet, args.name, namespace)
 
 
 if __name__ == '__main__':
