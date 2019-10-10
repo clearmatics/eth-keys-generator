@@ -3,6 +3,8 @@
 import base64
 import argparse
 import sha3
+import secrets
+import string
 from kubernetes import client, config
 from ecdsa import SigningKey, SECP256k1
 
@@ -30,7 +32,14 @@ def generate_keys():
 
     keccak.update(pub)
     address = keccak.hexdigest()[24:]
-    return {'private_key': priv.to_string().hex(), 'pub_key': pub.hex(), 'address': checksum_encode(address)}
+
+    alphabet = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(secrets.choice(alphabet) for i in range(30))  # for a 30-character password
+
+    return {'private_key': priv.to_string().hex(),
+            'pub_key': pub.hex(),
+            'address': checksum_encode(address),
+            'password': password}
 
 
 def write_keys(wallet, name, namespace):
@@ -41,7 +50,8 @@ def write_keys(wallet, name, namespace):
 
     cmap = client.V1ConfigMap()
 
-    sec.data = {'private_key': base64.b64encode(wallet['private_key'].encode()).decode()}
+    sec.data = {'private_key': base64.b64encode(wallet['private_key'].encode()).decode(),
+                'password': base64.b64encode(wallet['password'].encode()).decode()}
     cmap.data = {'address': wallet['address'], 'pub_key': wallet['pub_key']}
 
     api_instance.patch_namespaced_secret(name, namespace, sec)
