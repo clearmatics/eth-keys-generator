@@ -62,8 +62,8 @@ def main():
     parser = argparse.ArgumentParser(description='Generate set of keys for initialising the network and deploy it to kubernetes etcd')
     parser.add_argument('-k',
                         dest='kubeconf_type',
-                        default='pod',
-                        choices=['pod', 'remote'],
+                        default='non_k8s',
+                        choices=['pod', 'remote', 'non_k8s'],
                         help='Type of connection to kube-apiserver: pod or remote (default: %(default)s)'
                         )
     parser.add_argument('--namespace',
@@ -77,6 +77,8 @@ def main():
                         )
     args = parser.parse_args()
 
+    wallet = generate_keys()
+
     if args.kubeconf_type == 'pod':
         config.load_incluster_config()
         f = open("/var/run/secrets/kubernetes.io/serviceaccount/namespace", "r")
@@ -85,8 +87,12 @@ def main():
     elif args.kubeconf_type == 'remote':
         config.load_kube_config()
         namespace = args.namespace
+    elif args.kubeconf_type == 'non_k8s':
+        print('address:     ' + str(wallet['address']))
+        print('pub_key:     ' + str(wallet['pub_key']))
+        print('private_key: ' + str(wallet['private_key']))
+        exit(0)
 
-    wallet = generate_keys()
     write_keys(wallet, args.name, namespace)
 
 
