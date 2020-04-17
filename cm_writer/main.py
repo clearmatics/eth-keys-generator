@@ -33,8 +33,8 @@ def generate_keys():
     keccak.update(pub)
     address = keccak.hexdigest()[24:]
 
-    alphabet = string.ascii_letters + string.digits + string.punctuation
-    password = ''.join(secrets.choice(alphabet) for i in range(30))  # for a 30-character password
+    alphabet = string.ascii_letters + string.digits
+    password = ''.join(secrets.choice(alphabet) for i in range(32))  # for a 32-character password
 
     return {'private_key': priv.to_string().hex(),
             'pub_key': pub.hex(),
